@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VisaDesk v2 — 법무법인 대림</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --navy:      #0b1931;
+  --navy2:     #142240;
+  --blue:      #1859f5;
+  --blue-h:    #0f43cc;
+  --sky:       #e8efff;
+  --gold:      #c9923a;
+  --gold-bg:   #fff7ec;
+  --red:       #e63946;
+  --red-bg:    #fff0f1;
+  --green:     #2ec97e;
+  --green-bg:  #edfaf4;
+  --orange:    #f07830;
+  --orange-bg: #fff4ee;
+  --gray50:    #f9fafc;
+  --gray100:   #f1f4f9;
+  --gray200:   #e2e7f0;
+  --gray300:   #c8d0de;
+  --gray500:   #8492a6;
+  --gray700:   #3d4a5c;
+  --text:      #0f1923;
+  --text2:     #4a5568;
+  --white:     #ffffff;
+  --radius:    10px;
+  --sidebar-w: 230px;
+  --shadow-sm: 0 1px 4px rgba(11,25,49,.06);
+  --shadow:    0 4px 20px rgba(11,25,49,.09);
+  --shadow-lg: 0 12px 48px rgba(11,25,49,.14);
+  --font: 'Pretendard', 'Noto Sans KR', sans-serif;
+  --mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--gray50);color:var(--text);line-height:1.5;font-size:14px}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray300);border-radius:3px}
+
+/* ══════════════════════════════ LOGIN ══════════════════════════════ */
+#loginScreen{
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(160deg, var(--navy) 0%, #1a2e5a 50%, #0b1931 100%);
+  position:relative; overflow:hidden;
+}
+#loginScreen::before{
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 30%, rgba(24,89,245,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 600px at 80% 70%, rgba(201,146,58,.12) 0%, transparent 70%);
+}
+.login-grid{
+  display:grid; grid-template-columns:1fr 1fr; width:860px; max-width:96vw;
+  min-height:560px; border-radius:20px; overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,.4); position:relative; z-index:1;
+}
+.login-left{
+  background:linear-gradient(160deg,#1a3070,#0b1931);
+  padding:52px 44px; display:flex; flex-direction:column; justify-content:space-between;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.login-left .brand{display:flex;align-items:center;gap:12px;margin-bottom:40px}
+.login-left .brand-icon{
+  width:46px;height:46px;border-radius:12px;
+  background:linear-gradient(135deg,var(--blue),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.login-left .brand-name{color:white;font-size:22px;font-weight:800;letter-spacing:-.5px}
+.login-left .brand-sub{color:rgba(255,255,255,.4);font-size:11px;margin-top:2px;letter-spacing:.5px}
+.login-left h2{color:white;font-size:28px;font-weight:800;line-height:1.3;margin-bottom:16px}
+.login-left p{color:rgba(255,255,255,.5);font-size:13px;line-height:1.7}
+.login-left .features{margin-top:32px;display:flex;flex-direction:column;gap:12px}
+.login-left .feat{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.6);font-size:12px}
+.login-left .feat-icon{
+  width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.login-right{
+  background:white; padding:52px 44px; display:flex; flex-direction:column; justify-content:center;
+}
+.login-right h3{font-size:20px;font-weight:800;margin-bottom:6px}
+.login-right .subtitle{color:var(--gray500);font-size:13px;margin-bottom:32px}
+.lfield{margin-bottom:16px}
+.lfield label{display:block;font-size:11px;font-weight:700;color:var(--gray700);margin-bottom:7px;text-transform:uppercase;letter-spacing:.4px}
+.lfield input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--gray200);border-radius:8px;
+  font-family:var(--font);font-size:14px;color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.lfield input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,89,245,.1)}
+.lerror{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.btn-login{
+  width:100%;padding:13px;background:var(--blue);color:white;border:none;border-radius:8px;
+  font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;
+  transition:background .2s,transform .1s; margin-top:4px;
+}
+.btn-login:hover{background:var(--blue-h)}
+.btn-login:active{transform:scale(.99)}
+.demo-section{margin-top:24px;padding-top:20px;border-top:1px solid var(--gray100)}
+.demo-section p{font-size:11px;color:var(--gray500);text-align:center;margin-bottom:10px;text-transform:uppercase;letter-spacing:.6px}
+.demo-row{display:flex;gap:6px}
+.demo-btn{
+  flex:1;padding:8px 6px;border:1px solid var(--gray200);background:var(--gray50);
+  border-radius:7px;font-family:var(--font);font-size:11px;color:var(--gray700);
+  cursor:pointer;text-align:center;transition:all .15s;font-weight:600;
+}
+.demo-btn:hover{background:var(--sky);border-color:var(--blue);color:var(--blue)}
+
+/* ══════════════════════════════ APP SHELL ══════════════════════════════ */
+#appWrap{display:flex;min-height:100vh}
+.hidden{display:none!important}
+
+/* Sidebar */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;background:var(--navy);
+  position:fixed;left:0;top:0;bottom:0;z-index:200;
+  display:flex;flex-direction:column;overflow-y:auto;
+}
+.sb-logo{
+  padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:10px;
+}
+.sb-logo-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--blue),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;
+}
+.sb-logo-text .name{color:white;font-size:15px;font-weight:800;letter-spacing:-.3px}
+.sb-logo-text .sub{color:rgba(255,255,255,.35);font-size:10px;margin-top:1px}
+.sb-user{
+  margin:12px 12px 4px;padding:11px 13px;
+  background:rgba(255,255,255,.05);border-radius:9px;
+  border:1px solid rgba(255,255,255,.07);
+}
+.sb-role{
+  display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;
+}
+.role-visa_admin .sb-role{background:rgba(201,146,58,.2);color:var(--gold)}
+.role-company_admin .sb-role{background:rgba(24,89,245,.2);color:#7aa8ff}
+.role-employee .sb-role{background:rgba(46,201,126,.15);color:var(--green)}
+.sb-uname{color:white;font-size:12px;font-weight:600}
+.sb-ucomp{color:rgba(255,255,255,.4);font-size:10px;margin-top:2px}
+.sb-nav{flex:1;padding:8px 10px}
+.sb-section{padding:10px 8px 4px;color:rgba(255,255,255,.2);font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  color:rgba(255,255,255,.5);font-size:12.5px;cursor:pointer;
+  border-radius:8px;margin-bottom:1px;transition:all .15s;
+  user-select:none;
+}
+.nav-item:hover{color:white;background:rgba(255,255,255,.07)}
+.nav-item.active{color:white;background:rgba(24,89,245,.25)}
+.nav-item .nicon{font-size:15px;width:18px;text-align:center}
+.nav-item .nbadge{margin-left:auto;background:var(--red);color:white;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.06)}
+.btn-logout{
+  width:100%;padding:9px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);
+  border-radius:8px;font-family:var(--font);font-size:12px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-logout:hover{background:rgba(230,57,70,.15);color:#ff7070;border-color:rgba(230,57,70,.3)}
+
+/* Main */
+.main{margin-left:var(--sidebar-w);flex:1;padding:28px 32px;min-height:100vh}
+
+/* Page header */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.ph-left h2{font-size:20px;font-weight:800;letter-spacing:-.4px}
+.ph-left p{font-size:12px;color:var(--gray500);margin-top:2px}
+.ph-right{display:flex;gap:8px;align-items:center}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:9px 18px;
+  border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;white-space:nowrap;
+}
+.btn-primary{background:var(--blue);color:white}
+.btn-primary:hover{background:var(--blue-h)}
+.btn-secondary{background:white;color:var(--text);border:1.5px solid var(--gray200)}
+.btn-secondary:hover{background:var(--gray100)}
+.btn-danger{background:var(--red);color:white}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* Stats grid */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{
+  background:white;border-radius:var(--radius);padding:18px 20px;
+  box-shadow:var(--shadow-sm);border:1px solid var(--gray200);
+  position:relative;overflow:hidden;
+}
+.stat-card::after{content:attr(data-icon);position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:34px;opacity:.07}
+.stat-card.c-blue .stat-num{color:var(--blue)}
+.stat-card.c-red .stat-num{color:var(--red)}
+.stat-card.c-orange .stat-num{color:var(--orange)}
+.stat-card.c-green .stat-num{color:var(--green)}
+.stat-card.c-gold .stat-num{color:var(--gold)}
+.stat-label{font-size:11px;color:var(--gray500);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.stat-num{font-size:34px;font-weight:900;font-family:var(--mono);margin:4px 0;line-height:1}
+.stat-sub{font-size:11px;color:var(--gray300)}
+
+/* Alert banners */
+.alert{
+  display:flex;align-items:flex-start;gap:11px;padding:13px 16px;
+  border-radius:9px;font-size:13px;margin-bottom:12px;font-weight:500;
+  border:1px solid transparent;
+}
+.alert-red{background:var(--red-bg);border-color:rgba(230,57,70,.2);color:#b02020}
+.alert-orange{background:var(--orange-bg);border-color:rgba(240,120,48,.2);color:#804010}
+.alert-blue{background:var(--sky);border-color:rgba(24,89,245,.15);color:#0040a0}
+.alert-green{background:var(--green-bg);border-color:rgba(46,201,126,.2);color:#0a7040}
+
+/* Cards */
+.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray200);margin-bottom:20px;overflow:hidden}
+.card-header{
+  padding:16px 20px;border-bottom:1px solid var(--gray100);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.card-header h3{font-size:14px;font-weight:700}
+.card-body{padding:20px}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{
+  padding:10px 14px;text-align:left;font-size:11px;font-weight:700;
+  color:var(--gray500);text-transform:uppercase;letter-spacing:.4px;
+  background:var(--gray50);border-bottom:1px solid var(--gray200);
+  white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--gray100);cursor:pointer;transition:background .1s}
+tbody tr:hover{background:#f6f9ff}
+tbody tr:last-child{border-bottom:none}
+td{padding:12px 14px;font-size:13px;vertical-align:middle}
+.td-mono{font-family:var(--mono);font-size:12px;color:var(--gray700)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+.b-blue{background:var(--sky);color:var(--blue)}
+.b-gold{background:var(--gold-bg);color:#8a5e10}
+.b-red{background:var(--red-bg);color:var(--red)}
+.b-green{background:var(--green-bg);color:#0a7040}
+.b-orange{background:var(--orange-bg);color:#804010}
+.b-gray{background:var(--gray100);color:var(--gray700)}
+
+/* D-day chips */
+.dday{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;font-family:var(--mono)}
+.dd-critical{background:var(--red-bg);color:var(--red)}
+.dd-warning{background:var(--orange-bg);color:var(--orange)}
+.dd-ok{background:var(--green-bg);color:#0a7040}
+
+/* Filters */
+.filter-bar{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.ftab{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  border:1.5px solid var(--gray200);background:white;color:var(--gray700);
+  cursor:pointer;transition:all .15s;
+}
+.ftab.active{background:var(--navy);color:white;border-color:var(--navy)}
+.ftab:hover:not(.active){background:var(--gray100)}
+.search-box{
+  padding:8px 13px;border:1.5px solid var(--gray200);border-radius:8px;
+  font-family:var(--font);font-size:13px;outline:none;transition:border-color .2s;
+  min-width:220px;
+}
+.search-box:focus{border-color:var(--blue)}
+
+/* ── MODAL ── */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(11,25,49,.65);
+  z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(3px);
+}
+.overlay.show{display:flex}
+.modal{
+  background:white;border-radius:16px;width:700px;max-width:95vw;
+  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);
+}
+.modal-hd{
+  padding:22px 26px;border-bottom:1px solid var(--gray100);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:white;z-index:1;
+}
+.modal-hd h3{font-size:17px;font-weight:800}
+.modal-body{padding:26px}
+.modal-ft{
+  padding:14px 26px;border-top:1px solid var(--gray100);
+  display:flex;justify-content:flex-end;gap:8px;
+  position:sticky;bottom:0;background:white;
+}
+.btn-x{background:none;border:none;font-size:18px;cursor:pointer;color:var(--gray300);transition:color .2s;line-height:1}
+.btn-x:hover{color:var(--text)}
+
+/* Form */
+.frow{display:grid;gap:14px;margin-bottom:14px}
+.frow.c2{grid-template-columns:1fr 1fr}
+.frow.c3{grid-template-columns:1fr 1fr 1fr}
+.frow.c1{grid-template-columns:1fr}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--gray700);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px}
+.field input,.field select,.field textarea{
+  width:100%;padding:9px 12px;border:1.5px solid var(--gray200);border-radius:7px;
+  font-family:var(--font);font-size:13px;color:var(--text);outline:none;
+  transition:border-color .2s,box-shadow .2s;background:white;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(24,89,245,.08)}
+.field textarea{resize:vertical;min-height:80px}
+.sec-title{
+  font-size:12px;font-weight:700;color:var(--navy);
+  padding:10px 0 8px;border-bottom:1px solid var(--gray200);margin-bottom:14px;
+  display:flex;align-items:center;gap:7px;
+}
+
+/* Detail view */
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.det-item label{font-size:10px;font-weight:700;color:var(--gray500);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.det-item .val{font-size:14px;color:var(--text);font-weight:500}
+.det-item .val.mono{font-family:var(--mono);font-size:12px}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;color:var(--gray500)}
+.spin{
+  width:28px;height:28px;border:3px solid var(--gray200);border-top-color:var(--blue);
+  border-radius:50%;animation:spin .7s linear infinite;margin-right:12px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--gray300)}
+.empty .ei{font-size:44px;margin-bottom:10px}
+.empty p{font-size:13px}
+
+/* Page transitions */
+.page{display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:var(--navy);color:white;padding:13px 18px;
+  border-radius:10px;font-size:13px;font-weight:500;
+  box-shadow:var(--shadow-lg);z-index:9999;
+  transform:translateY(80px);opacity:0;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* Status dots */
+.sdot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.sdot::before{content:'';width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.s-접수 .sdot::before,.s-접수{color:var(--blue)}.s-접수 .sdot::before{background:var(--blue)}
+.s-검토중 .sdot::before,.s-검토중{color:var(--orange)}.s-검토중 .sdot::before{background:var(--orange)}
+.s-처리중 .sdot::before,.s-처리중{color:var(--gold)}.s-처리중 .sdot::before{background:var(--gold)}
+.s-완료 .sdot::before,.s-완료{color:var(--green)}.s-완료 .sdot::before{background:var(--green)}
+.s-보류 .sdot::before,.s-보류{color:var(--gray500)}.s-보류 .sdot::before{background:var(--gray500)}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:20px 16px}
+  .login-grid{grid-template-columns:1fr}
+  .login-left{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="loginScreen">
+  <div class="login-grid">
+    <div class="login-left">
+      <div>
+        <div class="brand">
+          <div class="brand-icon">⚖️</div>
+          <div><div class="brand-name">VisaDesk</div><div class="brand-sub">법무법인 대림</div></div>
+        </div>
+        <h2>외국인 비자<br>통합 관리 플랫폼</h2>
+        <p>외국인 고용 업체의 비자 현황을 한눈에 파악하고, 문제 발생 시 즉각 대응하세요.</p>
+        <div class="features">
+          <div class="feat"><div class="feat-icon">🔒</div>업체 간 완전한 데이터 칸막이</div>
+          <div class="feat"><div class="feat-icon">🚨</div>비자 만료 D-day 자동 경보</div>
+          <div class="feat"><div class="feat-icon">⚡</div>비자 문제 즉시 의뢰 접수</div>
+          <div class="feat"><div class="feat-icon">📊</div>실시간 현황 대시보드</div>
+        </div>
+      </div>
+      <div style="color:rgba(255,255,255,.2);font-size:11px">© 2026 법무법인 대림 · 관리 무료 · 처리 비용만 청구</div>
+    </div>
+    <div class="login-right">
+      <h3>로그인</h3>
+      <div class="subtitle">계정 정보를 입력하세요</div>
+      <div class="lfield">
+        <label>아이디</label>
+        <input id="loginId" type="text" placeholder="아이디 입력" onkeydown="if(event.key==='Enter')document.getElementById('loginPw').focus()">
+      </div>
+      <div class="lfield">
+        <label>비밀번호</label>
+        <input id="loginPw" type="password" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="lerror" id="loginErr">아이디 또는 비밀번호가 올바르지 않습니다</div>
+      <button class="btn-login" onclick="doLogin()" id="loginBtn">로그인</button>
+      <div class="demo-section">
+        <p>데모 계정 빠른 로그인</p>
+        <div class="demo-row">
+          <button class="demo-btn" onclick="ql('admin','1234')">🔴 비자관리자</button>
+          <button class="demo-btn" onclick="ql('company1','1234')">🟡 업체관리자</button>
+          <button class="demo-btn" onclick="ql('emp1','1234')">🟢 외국인직원</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="appWrap" class="hidden">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">⚖️</div>
+      <div class="sb-logo-text">
+        <div class="name">VisaDesk</div>
+        <div class="sub">법무법인 대림</div>
+      </div>
+    </div>
+    <div class="sb-user" id="sbUser">
+      <div class="sb-role" id="sbRole"></div>
+      <div class="sb-uname" id="sbName"></div>
+      <div class="sb-ucomp" id="sbComp"></div>
+    </div>
+    <div class="sb-nav" id="sbNav"></div>
+    <div class="sb-bottom">
+      <button class="btn-logout" onclick="doLogout()">⬡ &nbsp;로그아웃</button>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="mainArea">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="ph">
+        <div class="ph-left"><h2 id="dashTitle">대시보드</h2><p id="dashDate"></p></div>
+      </div>
+      <div class="stats" id="statsGrid"></div>
+      <div id="alertZone"></div>
+      <div id="dashCards"></div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="page" id="page-employees">
+      <div class="ph">
+        <div class="ph-left"><h2>외국인 직원 관리</h2><p>등록된 외국인 직원 목록 및 비자 현황</p></div>
+        <div class="ph-right" id="empPageActions"></div>
+      </div>
+      <div class="filter-bar" id="empFilterBar">
+        <input class="search-box" id="empSearch" placeholder="🔍 이름, 국적, 등록번호 검색..." oninput="loadEmployees()">
+        <button class="ftab active" onclick="setVisa('',this)">전체</button>
+        <button class="ftab" onclick="setVisa('E-9',this)">E-9</button>
+        <button class="ftab" onclick="setVisa('H-2',this)">H-2</button>
+        <button class="ftab" onclick="setVisa('E-7',this)">E-7</button>
+        <button class="ftab" onclick="setVisa('F-4',this)">F-4</button>
+        <button class="ftab" onclick="setVisa('expiring',this)">⏰ 만료임박</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3 id="empTableTitle">직원 목록</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>이름</th><th>국적</th><th>비자유형</th><th>체류만료일</th><th>D-day</th>
+              <th id="thComp">소속업체</th><th>상태</th><th>관리</th>
+            </tr></thead>
+            <tbody id="empTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ISSUES -->
+    <div class="page" id="page-issues">
+      <div class="ph">
+        <div class="ph-left"><h2>비자 문제 의뢰</h2><p>의뢰 접수 및 처리 현황 관리</p></div>
+        <div class="ph-right">
+          <button class="btn btn-primary" onclick="openNewIssue()">+ 새 의뢰 등록</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <button class="ftab active" onclick="setIssueFilter('',this)">전체</button>
+        <button class="ftab" onclick="setIssueFilter('접수',this)">접수</button>
+        <button class="ftab" onclick="setIssueFilter('검토중',this)">검토중</button>
+        <button class="ftab" onclick="setIssueFilter('처리중',this)">처리중</button>
+        <button class="ftab" onclick="setIssueFilter('완료',this)">완료</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>의뢰 목록</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>의뢰번호</th><th>직원명</th><th>업체</th><th>문제유형</th><th>긴급도</th><th>상태</th><th>접수일</th><th>담당</th></tr></thead>
+            <tbody id="issueTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPANIES (admin) -->
+    <div class="page" id="page-companies">
+      <div class="ph">
+        <div class="ph-left"><h2>업체 관리</h2><p>등록 업체 현황</p></div>
+        <div class="ph-right"><button class="btn btn-primary" onclick="openNewCompany()">+ 업체 등록</button></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>업체 목록</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>업체명</th><th>사업자번호</th><th>업종</th><th>담당자</th><th>외국인 수</th><th>진행 의뢰</th><th>등록일</th></tr></thead>
+            <tbody id="compTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS (admin) -->
+    <div class="page" id="page-users">
+      <div class="ph">
+        <div class="ph-left"><h2>계정 관리</h2><p>사용자 계정 현황</p></div>
+        <div class="ph-right"><button class="btn btn-primary" onclick="openNewUser()">+ 계정 생성</button></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>사용자 목록</h3></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>이름</th><th>아이디</th><th>역할</th><th>소속</th><th>최근 로그인</th></tr></thead>
+            <tbody id="userTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY INFO (employee) -->
+    <div class="page" id="page-myinfo">
+      <div class="ph"><div class="ph-left"><h2>내 비자 정보</h2><p>본인의 체류자격 및 비자 현황</p></div></div>
+      <div id="myInfoContent"></div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /appWrap -->
+
+<!-- ═══════════ MODALS ═══════════ -->
+
+<!-- Employee modal -->
+<div class="overlay" id="modalEmp">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="empModalTitle">외국인 직원 등록</h3><button class="btn-x" onclick="closeModal('modalEmp')">✕</button></div>
+    <div class="modal-body" id="empModalBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalEmp')">취소</button>
+      <button class="btn btn-primary" onclick="saveEmployee()">💾 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- Employee detail modal -->
+<div class="overlay" id="modalEmpDetail">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="empDetTitle">직원 상세 정보</h3><button class="btn-x" onclick="closeModal('modalEmpDetail')">✕</button></div>
+    <div class="modal-body" id="empDetBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalEmpDetail')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- Issue modal -->
+<div class="overlay" id="modalIssue">
+  <div class="modal">
+    <div class="modal-hd"><h3>비자 문제 의뢰 등록</h3><button class="btn-x" onclick="closeModal('modalIssue')">✕</button></div>
+    <div class="modal-body" id="issueModalBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalIssue')">취소</button>
+      <button class="btn btn-primary" onclick="saveIssue()">📨 의뢰 접수</button>
+    </div>
+  </div>
+</div>
+
+<!-- Issue detail modal -->
+<div class="overlay" id="modalIssueDetail">
+  <div class="modal">
+    <div class="modal-hd"><h3 id="issueDetTitle">의뢰 상세</h3><button class="btn-x" onclick="closeModal('modalIssueDetail')">✕</button></div>
+    <div class="modal-body" id="issueDetBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalIssueDetail')">닫기</button>
+      <button class="btn btn-primary" id="issueStatusBtn" style="display:none">상태 업데이트</button>
+    </div>
+  </div>
+</div>
+
+<!-- Company modal -->
+<div class="overlay" id="modalComp">
+  <div class="modal">
+    <div class="modal-hd"><h3>업체 등록</h3><button class="btn-x" onclick="closeModal('modalComp')">✕</button></div>
+    <div class="modal-body" id="compModalBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalComp')">취소</button>
+      <button class="btn btn-primary" onclick="saveCompany()">💾 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- User modal -->
+<div class="overlay" id="modalUser">
+  <div class="modal" style="width:480px">
+    <div class="modal-hd"><h3>계정 생성</h3><button class="btn-x" onclick="closeModal('modalUser')">✕</button></div>
+    <div class="modal-body" id="userModalBody"></div>
+    <div class="modal-ft">
+      <button class="btn btn-secondary" onclick="closeModal('modalUser')">취소</button>
+      <button class="btn btn-primary" onclick="saveUser()">💾 생성</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════
+// CONFIG — API 서버 주소 (실제 배포시 변경)
+// ════════════════════════════════════════════════
+const API = 'http://localhost:8000';  // ← 배포 후 실제 서버 URL로 변경
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let token = localStorage.getItem('vd_token');
+let currentUser = JSON.parse(localStorage.getItem('vd_user') || 'null');
+let visaFilter = '';
+let issueFilter = '';
+let cachedEmployees = [];
+
+// ════════════════════════════════════════════════
+// API HELPERS
+// ════════════════════════════════════════════════
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? {'Authorization': 'Bearer ' + token} : {}),
+    },
+    ...opts,
+  });
+  if (res.status === 401) { doLogout(); return null; }
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({detail:'오류가 발생했습니다'}));
+    showToast('❌ ' + (err.detail||'오류'));
+    return null;
+  }
+  return res.json();
+}
+
+// ════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════
+function ql(id, pw) {
+  document.getElementById('loginId').value = id;
+  document.getElementById('loginPw').value = pw;
+  doLogin();
+}
+
+async function doLogin() {
+  const id = document.getElementById('loginId').value.trim();
+  const pw = document.getElementById('loginPw').value;
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginBtn').textContent = '로그인 중...';
+  const data = await api('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({username: id, password: pw}),
+  });
+  document.getElementById('loginBtn').textContent = '로그인';
+  if (!data) { document.getElementById('loginErr').style.display = 'block'; return; }
+  token = data.access_token;
+  currentUser = data.user;
+  localStorage.setItem('vd_token', token);
+  localStorage.setItem('vd_user', JSON.stringify(currentUser));
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appWrap').classList.remove('hidden');
+  initApp();
+}
+
+function doLogout() {
+  token = null; currentUser = null;
+  localStorage.removeItem('vd_token');
+  localStorage.removeItem('vd_user');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('appWrap').classList.add('hidden');
+  document.getElementById('loginId').value = '';
+  document.getElementById('loginPw').value = '';
+}
+
+// ════════════════════════════════════════════════
+// NAV CONFIG
+// ════════════════════════════════════════════════
+const NAV = {
+  visa_admin: [
+    {page:'dashboard', icon:'📊', label:'대시보드'},
+    {page:'employees', icon:'👥', label:'외국인 직원'},
+    {page:'issues',    icon:'⚠️', label:'비자 의뢰', badge:true},
+    {page:'companies', icon:'🏢', label:'업체 관리'},
+    {page:'users',     icon:'🔑', label:'계정 관리'},
+  ],
+  company_admin: [
+    {page:'dashboard', icon:'📊', label:'대시보드'},
+    {page:'employees', icon:'👥', label:'소속 직원'},
+    {page:'issues',    icon:'⚠️', label:'비자 의뢰'},
+  ],
+  employee: [
+    {page:'myinfo',    icon:'🪪', label:'내 비자 정보'},
+    {page:'issues',    icon:'📋', label:'의뢰 현황'},
+  ],
+};
+
+function initApp() {
+  const r = currentUser.role;
+  document.getElementById('sbUser').className = 'sb-user role-' + r;
+  document.getElementById('sbRole').textContent = {visa_admin:'비자관리자',company_admin:'업체관리자',employee:'외국인직원'}[r];
+  document.getElementById('sbName').textContent = currentUser.name;
+  document.getElementById('sbComp').textContent = currentUser.company_name;
+
+  const nav = NAV[r] || NAV.employee;
+  document.getElementById('sbNav').innerHTML = nav.map(n =>
+    `<div class="nav-item" id="nav-${n.page}" onclick="showPage('${n.page}')">
+      <span class="nicon">${n.icon}</span>${n.label}
+      ${n.badge ? '<span class="nbadge" id="badgeIssues" style="display:none">0</span>' : ''}
+    </div>`
+  ).join('');
+
+  showPage(nav[0].page);
+  if (r === 'visa_admin') loadIssueBadge();
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const p = document.getElementById('page-'+page);
+  if (p) p.classList.add('active');
+  const n = document.getElementById('nav-'+page);
+  if (n) n.classList.add('active');
+
+  if (page==='dashboard') loadDashboard();
+  if (page==='employees') loadEmployees();
+  if (page==='issues')    loadIssues();
+  if (page==='companies') loadCompanies();
+  if (page==='users')     loadUsers();
+  if (page==='myinfo')    loadMyInfo();
+}
+
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
+function daysUntil(ds) {
+  if (!ds) return 9999;
+  const d = new Date(ds); const t = new Date();
+  t.setHours(0,0,0,0); return Math.ceil((d-t)/86400000);
+}
+function ddayChip(ds) {
+  const d = daysUntil(ds);
+  if (d < 0) return `<span class="dday dd-critical">만료됨</span>`;
+  if (d <= 30) return `<span class="dday dd-critical">D-${d}</span>`;
+  if (d <= 90) return `<span class="dday dd-warning">D-${d}</span>`;
+  return `<span class="dday dd-ok">D-${d}</span>`;
+}
+function visaBadge(t) {
+  const m={'E-9':'b-blue','H-2':'b-gold','E-7':'b-green','F-4':'b-blue','F-2':'b-orange','F-5':'b-green','F-6':'b-orange'};
+  return `<span class="badge ${m[t]||'b-gray'}">${t}</span>`;
+}
+function statusBadge(s) {
+  const m={'정상':'b-green','만료임박':'b-orange','갱신필요':'b-red','불법체류위험':'b-red'};
+  return `<span class="badge ${m[s]||'b-gray'}">${s}</span>`;
+}
+function urgBadge(u) {
+  const m={'즉시':'b-red','1주내':'b-orange','1개월내':'b-gold','여유있음':'b-green'};
+  return `<span class="badge ${m[u]||'b-gray'}">${u}</span>`;
+}
+function issueStatusHtml(s) {
+  return `<span class="sdot s-${s}">${s}</span>`;
+}
+
+// ════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 기준';
+  document.getElementById('dashTitle').textContent = currentUser.role==='visa_admin'?'전체 현황 대시보드':currentUser.company_name+' 현황';
+  document.getElementById('statsGrid').innerHTML = '<div class="loading"><div class="spin"></div>불러오는 중...</div>';
+
+  const d = await api('/api/dashboard');
+  if (!d) return;
+
+  let stats = '';
+  if (currentUser.role==='visa_admin')
+    stats += `<div class="stat-card c-blue" data-icon="🏢"><div class="stat-label">관리 업체</div><div class="stat-num">${d.company_count}</div><div class="stat-sub">활성 업체 수</div></div>`;
+  stats += `
+    <div class="stat-card c-blue" data-icon="👥"><div class="stat-label">외국인 직원</div><div class="stat-num">${d.total_employees}</div><div class="stat-sub">등록 직원 총합</div></div>
+    <div class="stat-card c-red" data-icon="⏰"><div class="stat-label">30일 내 만료</div><div class="stat-num">${d.expiring_30}</div><div class="stat-sub">즉시 조치 필요</div></div>
+    <div class="stat-card c-orange" data-icon="📅"><div class="stat-label">90일 내 만료</div><div class="stat-num">${d.expiring_90}</div><div class="stat-sub">사전 준비 필요</div></div>
+    <div class="stat-card c-gold" data-icon="⚖️"><div class="stat-label">진행 의뢰</div><div class="stat-num">${d.open_issues}</div><div class="stat-sub">처리 중인 건</div></div>
+    <div class="stat-card c-green" data-icon="📨"><div class="stat-label">신규 접수</div><div class="stat-num">${d.new_issues}</div><div class="stat-sub">대기 중인 의뢰</div></div>
+  `;
+  document.getElementById('statsGrid').innerHTML = stats;
+
+  let alerts = '';
+  if (d.expiring_30>0) alerts += `<div class="alert alert-red">🚨 체류 만료 <strong>30일 이내 직원 ${d.expiring_30}명</strong>이 있습니다. 즉시 갱신 절차를 진행하세요.</div>`;
+  if (d.expiring_90>0) alerts += `<div class="alert alert-orange">⚠️ 체류 만료 <strong>90일 이내 직원 ${d.expiring_90}명</strong>이 있습니다. 사전 준비를 시작하세요.</div>`;
+  if (d.passport_expiring>0) alerts += `<div class="alert alert-orange">🛂 여권 만료 <strong>90일 이내 직원 ${d.passport_expiring}명</strong>이 있습니다. 여권 갱신을 안내하세요.</div>`;
+  document.getElementById('alertZone').innerHTML = alerts;
+
+  let cards = '';
+  // Expiring soon list
+  if (d.expiring_30_list.length) {
+    cards += `<div class="card"><div class="card-header"><h3>🚨 만료 임박 직원 (30일 이내)</h3><button class="btn btn-sm btn-secondary" onclick="showPage('employees')">전체보기 →</button></div>
+    <div class="table-wrap"><table><thead><tr><th>이름</th><th>국적</th><th>비자</th><th>체류만료</th><th>D-day</th>${currentUser.role==='visa_admin'?'<th>업체</th>':''}</tr></thead><tbody>
+    ${d.expiring_30_list.map(e=>`<tr onclick="openEmpDetail('${e.id}')"><td><strong>${e.korean_name}</strong></td><td>${e.nationality}</td><td>${visaBadge(e.visa_type)}</td><td class="td-mono">${e.expiry_date}</td><td>${ddayChip(e.expiry_date)}</td>${currentUser.role==='visa_admin'?`<td>${e.company_name||''}</td>`:''}</tr>`).join('')}
+    </tbody></table></div></div>`;
+  }
+  // Recent issues
+  if (d.recent_issues.length) {
+    cards += `<div class="card"><div class="card-header"><h3>📋 최근 의뢰 현황</h3><button class="btn btn-sm btn-secondary" onclick="showPage('issues')">전체보기 →</button></div>
+    <div class="table-wrap"><table><thead><tr><th>직원</th><th>유형</th><th>긴급도</th><th>상태</th><th>접수일</th></tr></thead><tbody>
+    ${d.recent_issues.map(i=>`<tr onclick="openIssueDetail('${i.id}')"><td>${i.employee_name||'-'}</td><td><span class="badge b-blue">${i.issue_type}</span></td><td>${urgBadge(i.urgency)}</td><td>${issueStatusHtml(i.status)}</td><td class="td-mono">${i.request_date||''}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  }
+  document.getElementById('dashCards').innerHTML = cards;
+}
+
+// ════════════════════════════════════════════════
+// EMPLOYEES
+// ════════════════════════════════════════════════
+function setVisa(v, el) {
+  visaFilter = v;
+  document.querySelectorAll('#empFilterBar .ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  loadEmployees();
+}
+
+async function loadEmployees() {
+  const r = currentUser.role;
+  document.getElementById('thComp').style.display = r==='visa_admin' ? '' : 'none';
+
+  // Actions
+  const acts = document.getElementById('empPageActions');
+  acts.innerHTML = (r==='visa_admin'||r==='company_admin')
+    ? `<button class="btn btn-primary" onclick="openNewEmp()">+ 직원 등록</button>` : '';
+
+  document.getElementById('empTbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spin"></div>불러오는 중...</div></td></tr>';
+
+  const q = document.getElementById('empSearch')?.value || '';
+  let url = '/api/employees?';
+  if (q) url += 'q=' + encodeURIComponent(q) + '&';
+  if (visaFilter && visaFilter !== 'expiring') url += 'visa_type=' + visaFilter + '&';
+  if (visaFilter === 'expiring') url += 'expiring_days=90&';
+
+  const emps = await api(url);
+  if (!emps) return;
+  cachedEmployees = emps;
+
+  document.getElementById('empTableTitle').textContent = `직원 목록 (${emps.length}명)`;
+
+  if (!emps.length) {
+    document.getElementById('empTbody').innerHTML = '<tr><td colspan="8"><div class="empty"><div class="ei">🔍</div><p>검색 결과가 없습니다</p></div></td></tr>';
+    return;
+  }
+  document.getElementById('empTbody').innerHTML = emps.map(e => `
+    <tr onclick="openEmpDetail('${e.id}')">
+      <td><strong>${e.korean_name}</strong><br><span style="color:var(--gray500);font-size:11px">${e.native_name||''}</span></td>
+      <td>${e.nationality||'-'}</td>
+      <td>${visaBadge(e.visa_type||'?')}</td>
+      <td class="td-mono">${e.expiry_date||'-'}</td>
+      <td>${e.expiry_date ? ddayChip(e.expiry_date) : '-'}</td>
+      <td style="display:${r==='visa_admin'?'':'none'}">${e.company_name||'-'}</td>
+      <td>${statusBadge(e.visa_status||'정상')}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn btn-sm btn-secondary" onclick="openEmpDetail('${e.id}')">상세</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ════════════════════════════════════════════════
+// EMPLOYEE MODAL
+// ════════════════════════════════════════════════
+async function openNewEmp() {
+  let compOpts = '';
+  if (currentUser.role === 'visa_admin') {
+    const comps = await api('/api/companies');
+    if (comps) compOpts = comps.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  } else {
+    compOpts = `<option value="${currentUser.company_id}">${currentUser.company_name}</option>`;
+  }
+  document.getElementById('empModalTitle').textContent = '외국인 직원 등록';
+  document.getElementById('empModalBody').innerHTML = `
+    <div class="sec-title">👤 인적 정보</div>
+    <div class="frow c2">
+      <div class="field"><label>한국어 이름 *</label><input id="f_kn" placeholder="홍길동"></div>
+      <div class="field"><label>본국 이름</label><input id="f_nn" placeholder="Hong Gil Dong"></div>
+    </div>
+    <div class="frow c3">
+      <div class="field"><label>국적 *</label><select id="f_na"><option>중국</option><option>베트남</option><option>방글라데시</option><option>캄보디아</option><option>네팔</option><option>미얀마</option><option>태국</option><option>인도네시아</option><option>필리핀</option><option>우즈베키스탄</option><option>몽골</option><option>기타</option></select></div>
+      <div class="field"><label>생년월일</label><input id="f_bd" type="date"></div>
+      <div class="field"><label>성별</label><select id="f_gd"><option>남</option><option>여</option></select></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>여권번호</label><input id="f_pn" placeholder="G12345678"></div>
+      <div class="field"><label>여권 만료일</label><input id="f_pe" type="date"></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>외국인등록번호</label><input id="f_an" placeholder="901234-5678901"></div>
+      <div class="field"><label>전화번호</label><input id="f_ph" placeholder="010-1234-5678"></div>
+    </div>
+    <div class="frow c1"><div class="field"><label>국내 주소</label><input id="f_ad" placeholder="서울시 영등포구..."></div></div>
+    <div class="frow c1"><div class="field"><label>비상연락처</label><input id="f_ec" placeholder="010-0000-0000"></div></div>
+    <div class="sec-title" style="margin-top:4px">🏢 소속 업체</div>
+    <div class="frow c1"><div class="field"><label>업체 *</label><select id="f_co">${compOpts}</select></div></div>
+    <div class="sec-title" style="margin-top:4px">🪪 비자 정보</div>
+    <div class="frow c3">
+      <div class="field"><label>비자 유형 *</label><select id="f_vt"><option>E-9</option><option>H-2</option><option>E-7</option><option>F-4</option><option>F-2</option><option>F-5</option><option>F-6</option><option>D-8</option><option>G-1</option><option>기타</option></select></div>
+      <div class="field"><label>입국일</label><input id="f_en" type="date"></div>
+      <div class="field"><label>체류 만료일 *</label><input id="f_ex" type="date"></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>외국인등록증 만료일</label><input id="f_ae" type="date"></div>
+      <div class="field"><label>비자 상태</label><select id="f_vs"><option>정상</option><option>만료임박</option><option>갱신필요</option><option>불법체류위험</option></select></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>사업장 변경 제한</label><select id="f_wr"><option value="false">없음 (자유)</option><option value="true">있음 (제한)</option></select></div>
+      <div class="field"><label>재입국 허가</label><select id="f_rp"><option value="false">없음</option><option value="true">있음</option></select></div>
+    </div>
+    <div class="frow c1"><div class="field"><label>특이사항</label><textarea id="f_rm" placeholder="특이사항..."></textarea></div></div>
+  `;
+  document.getElementById('modalEmp').classList.add('show');
+}
+
+async function saveEmployee() {
+  const data = {
+    company_id: document.getElementById('f_co').value,
+    korean_name: document.getElementById('f_kn').value,
+    native_name: document.getElementById('f_nn').value,
+    nationality: document.getElementById('f_na').value,
+    birth_date: document.getElementById('f_bd').value,
+    gender: document.getElementById('f_gd').value,
+    passport_no: document.getElementById('f_pn').value,
+    passport_expiry: document.getElementById('f_pe').value,
+    alien_reg_no: document.getElementById('f_an').value,
+    phone: document.getElementById('f_ph').value,
+    address: document.getElementById('f_ad').value,
+    emergency_contact: document.getElementById('f_ec').value,
+    visa_type: document.getElementById('f_vt').value,
+    entry_date: document.getElementById('f_en').value,
+    expiry_date: document.getElementById('f_ex').value,
+    alien_card_expiry: document.getElementById('f_ae').value,
+    visa_status: document.getElementById('f_vs').value,
+    workplace_restriction: document.getElementById('f_wr').value === 'true',
+    reentry_permit: document.getElementById('f_rp').value === 'true',
+    remarks: document.getElementById('f_rm').value,
+  };
+  if (!data.korean_name || !data.expiry_date) { showToast('❌ 이름과 체류 만료일은 필수입니다'); return; }
+  const res = await api('/api/employees', {method:'POST', body:JSON.stringify(data)});
+  if (res) { closeModal('modalEmp'); loadEmployees(); showToast('✅ 직원이 등록되었습니다'); }
+}
+
+async function openEmpDetail(id) {
+  const emp = await api('/api/employees/' + id);
+  if (!emp) return;
+  document.getElementById('empDetTitle').textContent = `${emp.korean_name} (${emp.native_name||''}) 상세`;
+  const d = daysUntil(emp.expiry_date);
+  const banner = d<=30 ? `<div class="alert alert-red">🚨 체류 만료 <strong>${d}일</strong> 남았습니다. 즉시 갱신이 필요합니다!</div>`
+    : d<=90 ? `<div class="alert alert-orange">⚠️ 체류 만료 <strong>${d}일</strong> 남았습니다. 준비를 시작하세요.</div>`
+    : `<div class="alert alert-green">✅ 체류자격이 정상 상태입니다.</div>`;
+
+  document.getElementById('empDetBody').innerHTML = `
+    ${banner}
+    <div class="sec-title">👤 인적 정보</div>
+    <div class="det-grid">
+      <div class="det-item"><label>한국어 이름</label><div class="val">${emp.korean_name}</div></div>
+      <div class="det-item"><label>본국 이름</label><div class="val">${emp.native_name||'-'}</div></div>
+      <div class="det-item"><label>국적</label><div class="val">${emp.nationality||'-'}</div></div>
+      <div class="det-item"><label>생년월일</label><div class="val mono">${emp.birth_date||'-'}</div></div>
+      <div class="det-item"><label>성별</label><div class="val">${emp.gender||'-'}</div></div>
+      <div class="det-item"><label>전화번호</label><div class="val mono">${emp.phone||'-'}</div></div>
+      <div class="det-item"><label>주소</label><div class="val">${emp.address||'-'}</div></div>
+      <div class="det-item"><label>비상연락처</label><div class="val mono">${emp.emergency_contact||'-'}</div></div>
+    </div>
+    <div class="sec-title" style="margin-top:12px">📄 여권</div>
+    <div class="det-grid">
+      <div class="det-item"><label>여권번호</label><div class="val mono">${emp.passport_no||'-'}</div></div>
+      <div class="det-item"><label>여권 만료일</label><div class="val">${emp.passport_expiry||'-'} ${emp.passport_expiry?ddayChip(emp.passport_expiry):''}</div></div>
+    </div>
+    <div class="sec-title" style="margin-top:12px">🪪 비자 / 체류자격</div>
+    <div class="det-grid">
+      <div class="det-item"><label>비자 유형</label><div class="val">${visaBadge(emp.visa_type||'?')}</div></div>
+      <div class="det-item"><label>비자 상태</label><div class="val">${statusBadge(emp.visa_status||'정상')}</div></div>
+      <div class="det-item"><label>외국인등록번호</label><div class="val mono">${emp.alien_reg_no||'-'}</div></div>
+      <div class="det-item"><label>입국일</label><div class="val mono">${emp.entry_date||'-'}</div></div>
+      <div class="det-item"><label>체류 만료일</label><div class="val">${emp.expiry_date} ${ddayChip(emp.expiry_date)}</div></div>
+      <div class="det-item"><label>외등증 만료일</label><div class="val mono">${emp.alien_card_expiry||'-'}</div></div>
+      <div class="det-item"><label>사업장 변경</label><div class="val">${emp.workplace_restriction?'<span class="badge b-red">제한</span>':'<span class="badge b-green">자유</span>'}</div></div>
+      <div class="det-item"><label>소속 업체</label><div class="val">${emp.company_name||'-'}</div></div>
+    </div>
+    ${emp.remarks?`<div class="sec-title" style="margin-top:12px">📝 특이사항</div><p style="font-size:13px;color:var(--text2);padding:8px 0">${emp.remarks}</p>`:''}
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-primary" onclick="closeModal('modalEmpDetail');openNewIssue('${emp.id}')">⚠️ 비자 문제 의뢰 등록</button>
+    </div>
+  `;
+  document.getElementById('modalEmpDetail').classList.add('show');
+}
+
+// ════════════════════════════════════════════════
+// ISSUES
+// ════════════════════════════════════════════════
+function setIssueFilter(f, el) {
+  issueFilter = f;
+  document.querySelectorAll('#page-issues .ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  loadIssues();
+}
+
+async function loadIssues() {
+  document.getElementById('issueTbody').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spin"></div>불러오는 중...</div></td></tr>';
+  const url = '/api/issues' + (issueFilter ? '?status=' + issueFilter : '');
+  const issues = await api(url);
+  if (!issues) return;
+
+  if (!issues.length) {
+    document.getElementById('issueTbody').innerHTML = '<tr><td colspan="8"><div class="empty"><div class="ei">✅</div><p>해당 의뢰가 없습니다</p></div></td></tr>';
+    return;
+  }
+  document.getElementById('issueTbody').innerHTML = issues.map((iss,i) => `
+    <tr onclick="openIssueDetail('${iss.id}')">
+      <td class="td-mono">VD-${String(i+1).padStart(4,'0')}</td>
+      <td>${iss.employee_name||'-'}</td>
+      <td>${iss.company_name||'-'}</td>
+      <td><span class="badge b-blue">${iss.issue_type}</span></td>
+      <td>${urgBadge(iss.urgency)}</td>
+      <td>${issueStatusHtml(iss.status)}</td>
+      <td class="td-mono">${iss.request_date||''}</td>
+      <td>${iss.assigned_to||'미배정'}</td>
+    </tr>`).join('');
+}
+
+async function openNewIssue(empId) {
+  const emps = await api('/api/employees' + (empId ? '' : ''));
+  if (!emps) return;
+  const opts = emps.map(e=>`<option value="${e.id}" ${e.id===empId?'selected':''}>${e.korean_name} (${e.nationality||''})</option>`).join('');
+  document.getElementById('issueModalBody').innerHTML = `
+    <div class="frow c1"><div class="field"><label>해당 직원 *</label><select id="i_emp">${opts}</select></div></div>
+    <div class="frow c2">
+      <div class="field"><label>문제 유형 *</label><select id="i_type"><option>비자만료임박</option><option>불법체류위험</option><option>체류자격변경</option><option>사업장변경</option><option>여권만료</option><option>기타</option></select></div>
+      <div class="field"><label>긴급도 *</label><select id="i_urg"><option>즉시</option><option>1주내</option><option>1개월내</option><option>여유있음</option></select></div>
+    </div>
+    <div class="frow c1"><div class="field"><label>의뢰 제목 *</label><input id="i_title" placeholder="간략한 제목 입력..."></div></div>
+    <div class="frow c1"><div class="field"><label>상세 내용</label><textarea id="i_desc" style="min-height:120px" placeholder="상세 내용, 배경 상황 등..."></textarea></div></div>
+    <div class="alert alert-blue" style="margin-top:4px">ℹ️ 의뢰 접수 후 법무법인 대림 담당자가 검토합니다. <strong>관리 비용 무료 · 처리 비용은 실제 진행 시 안내</strong></div>
+  `;
+  document.getElementById('modalIssue').classList.add('show');
+}
+
+async function saveIssue() {
+  const data = {
+    employee_id: document.getElementById('i_emp').value,
+    issue_type: document.getElementById('i_type').value,
+    title: document.getElementById('i_title').value,
+    description: document.getElementById('i_desc').value,
+    urgency: document.getElementById('i_urg').value,
+  };
+  if (!data.title) { showToast('❌ 의뢰 제목을 입력하세요'); return; }
+  const res = await api('/api/issues', {method:'POST', body:JSON.stringify(data)});
+  if (res) { closeModal('modalIssue'); loadIssues(); showToast('📨 의뢰가 접수되었습니다'); loadIssueBadge(); }
+}
+
+let issueCache = {};
+async function openIssueDetail(id) {
+  const issues = await api('/api/issues');
+  const iss = issues?.find(i=>i.id===id);
+  if (!iss) return;
+  issueCache.current = iss;
+  const isAdmin = currentUser.role === 'visa_admin';
+  document.getElementById('issueDetTitle').textContent = `[${iss.issue_type}] ${iss.title}`;
+  document.getElementById('issueDetBody').innerHTML = `
+    <div class="det-grid">
+      <div class="det-item"><label>직원명</label><div class="val">${iss.employee_name||'-'}</div></div>
+      <div class="det-item"><label>업체</label><div class="val">${iss.company_name||'-'}</div></div>
+      <div class="det-item"><label>문제 유형</label><div class="val"><span class="badge b-blue">${iss.issue_type}</span></div></div>
+      <div class="det-item"><label>긴급도</label><div class="val">${urgBadge(iss.urgency)}</div></div>
+      <div class="det-item"><label>상태</label><div class="val">${issueStatusHtml(iss.status)}</div></div>
+      <div class="det-item"><label>담당자</label><div class="val">${iss.assigned_to||'미배정'}</div></div>
+      <div class="det-item"><label>접수일</label><div class="val mono">${iss.request_date||'-'}</div></div>
+      <div class="det-item"><label>처리완료일</label><div class="val mono">${iss.resolution_date||'-'}</div></div>
+    </div>
+    <div class="sec-title" style="margin-top:14px">📄 의뢰 내용</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;padding:8px 0">${iss.description||'내용 없음'}</p>
+    ${iss.resolution_note?`<div class="sec-title" style="margin-top:14px">✅ 처리 결과</div><p style="font-size:13px;color:var(--text2);line-height:1.7;padding:8px 0">${iss.resolution_note}</p>`:''}
+    ${isAdmin ? `
+    <div class="sec-title" style="margin-top:14px">🔧 상태 업데이트 (관리자)</div>
+    <div class="frow c2" style="margin-top:8px">
+      <div class="field"><label>상태 변경</label><select id="det_status">
+        <option ${iss.status==='접수'?'selected':''}>접수</option>
+        <option ${iss.status==='검토중'?'selected':''}>검토중</option>
+        <option ${iss.status==='처리중'?'selected':''}>처리중</option>
+        <option ${iss.status==='완료'?'selected':''}>완료</option>
+        <option ${iss.status==='보류'?'selected':''}>보류</option>
+      </select></div>
+      <div class="field"><label>담당자</label><input id="det_assigned" value="${iss.assigned_to||''}"></div>
+    </div>
+    <div class="frow c1">
+      <div class="field"><label>처리 결과 메모</label><textarea id="det_note" placeholder="처리 결과 또는 메모...">${iss.resolution_note||''}</textarea></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>청구 금액 (원)</label><input id="det_fee" type="number" value="${iss.fee_amount||''}" placeholder="0"></div>
+      <div class="field"><label>청구 상태</label><select id="det_feestatus">
+        <option ${iss.fee_status==='미청구'?'selected':''}>미청구</option>
+        <option ${iss.fee_status==='청구'?'selected':''}>청구</option>
+        <option ${iss.fee_status==='완납'?'selected':''}>완납</option>
+      </select></div>
+    </div>
+    ` : ''}
+  `;
+  const btn = document.getElementById('issueStatusBtn');
+  if (isAdmin) {
+    btn.style.display = '';
+    btn.onclick = () => updateIssue(id);
+  } else btn.style.display = 'none';
+  document.getElementById('modalIssueDetail').classList.add('show');
+}
+
+async function updateIssue(id) {
+  const data = {
+    status: document.getElementById('det_status').value,
+    assigned_to: document.getElementById('det_assigned').value,
+    resolution_note: document.getElementById('det_note').value,
+    fee_amount: parseFloat(document.getElementById('det_fee').value)||null,
+    fee_status: document.getElementById('det_feestatus').value,
+  };
+  const res = await api('/api/issues/'+id, {method:'PATCH', body:JSON.stringify(data)});
+  if (res) { closeModal('modalIssueDetail'); loadIssues(); showToast('✅ 의뢰가 업데이트 되었습니다'); loadIssueBadge(); }
+}
+
+async function loadIssueBadge() {
+  const issues = await api('/api/issues?status=접수');
+  const badge = document.getElementById('badgeIssues');
+  if (!badge) return;
+  if (issues && issues.length > 0) { badge.textContent = issues.length; badge.style.display = ''; }
+  else badge.style.display = 'none';
+}
+
+// ════════════════════════════════════════════════
+// COMPANIES
+// ════════════════════════════════════════════════
+async function loadCompanies() {
+  document.getElementById('compTbody').innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spin"></div>불러오는 중...</div></td></tr>';
+  const comps = await api('/api/companies');
+  if (!comps) return;
+  document.getElementById('compTbody').innerHTML = comps.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td class="td-mono">${c.biz_number||'-'}</td>
+      <td>${c.industry||'-'}</td>
+      <td>${c.contact||'-'}<br><span class="td-mono" style="font-size:11px">${c.phone||''}</span></td>
+      <td><span class="badge b-blue">${c.employee_count}명</span></td>
+      <td>${c.open_issues>0?`<span class="badge b-orange">${c.open_issues}건 진행</span>`:'<span class="badge b-green">없음</span>'}</td>
+      <td class="td-mono">${c.created_at||'-'}</td>
+    </tr>`).join('');
+}
+
+function openNewCompany() {
+  document.getElementById('compModalBody').innerHTML = `
+    <div class="frow c2">
+      <div class="field"><label>업체명 *</label><input id="c_name" placeholder="(주)서울기공"></div>
+      <div class="field"><label>사업자등록번호</label><input id="c_biz" placeholder="123-45-67890"></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>업종</label><input id="c_ind" placeholder="제조업, 농업 등"></div>
+      <div class="field"><label>담당자명</label><input id="c_ct" placeholder="홍길동"></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>담당자 연락처</label><input id="c_ph" placeholder="010-1234-5678"></div>
+      <div class="field"><label>담당자 이메일</label><input id="c_em" placeholder="contact@company.com"></div>
+    </div>
+    <div class="frow c1"><div class="field"><label>업체 주소</label><input id="c_ad" placeholder="서울시..."></div></div>
+    <div class="frow c1"><div class="field"><label>메모</label><textarea id="c_mo" placeholder="특이사항, 메모..."></textarea></div></div>
+    <div class="alert alert-blue" style="margin-top:4px">ℹ️ 등록 후 업체관리자 계정을 별도 생성해 주세요 (계정 관리 메뉴)</div>
+  `;
+  document.getElementById('modalComp').classList.add('show');
+}
+
+async function saveCompany() {
+  const data = {
+    name: document.getElementById('c_name').value,
+    biz_number: document.getElementById('c_biz').value,
+    industry: document.getElementById('c_ind').value,
+    contact: document.getElementById('c_ct').value,
+    phone: document.getElementById('c_ph').value,
+    email: document.getElementById('c_em').value,
+    address: document.getElementById('c_ad').value,
+    memo: document.getElementById('c_mo').value,
+  };
+  if (!data.name) { showToast('❌ 업체명은 필수입니다'); return; }
+  const res = await api('/api/companies', {method:'POST', body:JSON.stringify(data)});
+  if (res) { closeModal('modalComp'); loadCompanies(); showToast('✅ 업체가 등록되었습니다'); }
+}
+
+// ════════════════════════════════════════════════
+// USERS
+// ════════════════════════════════════════════════
+async function loadUsers() {
+  document.getElementById('userTbody').innerHTML = '<tr><td colspan="5"><div class="loading"><div class="spin"></div>불러오는 중...</div></td></tr>';
+  const users = await api('/api/users');
+  if (!users) return;
+  const roleLabel = {visa_admin:'🔴 비자관리자', company_admin:'🟡 업체관리자', employee:'🟢 외국인직원'};
+  document.getElementById('userTbody').innerHTML = users.map(u => `
+    <tr>
+      <td><strong>${u.name||'-'}</strong></td>
+      <td class="td-mono">${u.username}</td>
+      <td>${roleLabel[u.role]||u.role}</td>
+      <td>${u.company_name||'-'}</td>
+      <td class="td-mono" style="font-size:11px">${u.last_login||'미로그인'}</td>
+    </tr>`).join('');
+}
+
+async function openNewUser() {
+  const comps = await api('/api/companies');
+  const compOpts = comps ? comps.map(c=>`<option value="${c.id}">${c.name}</option>`).join('') : '';
+  document.getElementById('userModalBody').innerHTML = `
+    <div class="frow c1"><div class="field"><label>역할 *</label><select id="u_role" onchange="toggleCompSelect()">
+      <option value="company_admin">업체관리자</option>
+      <option value="employee">외국인직원</option>
+      <option value="visa_admin">비자관리자</option>
+    </select></div></div>
+    <div class="frow c1" id="compSelectRow"><div class="field"><label>소속 업체 *</label><select id="u_comp"><option value="">-- 선택 --</option>${compOpts}</select></div></div>
+    <div class="frow c2">
+      <div class="field"><label>아이디 *</label><input id="u_id" placeholder="로그인 아이디"></div>
+      <div class="field"><label>비밀번호 *</label><input id="u_pw" type="password" placeholder="초기 비밀번호"></div>
+    </div>
+    <div class="frow c2">
+      <div class="field"><label>이름</label><input id="u_name" placeholder="홍길동"></div>
+      <div class="field"><label>이메일</label><input id="u_email" placeholder="abc@company.com"></div>
+    </div>
+  `;
+}
+function toggleCompSelect() {
+  const role = document.getElementById('u_role')?.value;
+  const row = document.getElementById('compSelectRow');
+  if (row) row.style.display = role==='visa_admin'?'none':'';
+}
+
+async function saveUser() {
+  const data = {
+    role: document.getElementById('u_role').value,
+    company_id: document.getElementById('u_comp')?.value || null,
+    username: document.getElementById('u_id').value,
+    password: document.getElementById('u_pw').value,
+    name: document.getElementById('u_name').value,
+    email: document.getElementById('u_email').value,
+  };
+  if (!data.username||!data.password) { showToast('❌ 아이디와 비밀번호는 필수입니다'); return; }
+  const res = await api('/api/users', {method:'POST', body:JSON.stringify(data)});
+  if (res) { closeModal('modalUser'); loadUsers(); showToast('✅ 계정이 생성되었습니다'); }
+}
+
+// ════════════════════════════════════════════════
+// MY INFO
+// ════════════════════════════════════════════════
+async function loadMyInfo() {
+  if (!currentUser.employee_id) {
+    document.getElementById('myInfoContent').innerHTML = '<div class="alert alert-blue">직원 계정이 연결되지 않았습니다. 관리자에게 문의하세요.</div>';
+    return;
+  }
+  const emp = await api('/api/employees/' + currentUser.employee_id);
+  if (!emp) return;
+  const d = daysUntil(emp.expiry_date);
+  const banner = d<=30?`<div class="alert alert-red">🚨 체류 만료 <strong>${d}일</strong> 남았습니다! 담당자에게 즉시 연락하세요.</div>`
+    :d<=90?`<div class="alert alert-orange">⚠️ 체류 만료 <strong>${d}일</strong> 남았습니다. 미리 준비하세요.</div>`
+    :`<div class="alert alert-green">✅ 체류자격이 정상 상태입니다. 체류 만료일: <strong>${emp.expiry_date}</strong></div>`;
+
+  const issues = await api('/api/issues');
+  const myIssues = issues?.filter(i=>i.employee_id===emp.id)||[];
+
+  document.getElementById('myInfoContent').innerHTML = `
+    ${banner}
+    <div class="card">
+      <div class="card-header"><h3>🪪 내 비자 정보</h3></div>
+      <div class="card-body">
+        <div class="det-grid">
+          <div class="det-item"><label>이름</label><div class="val">${emp.korean_name} (${emp.native_name||''})</div></div>
+          <div class="det-item"><label>국적</label><div class="val">${emp.nationality||'-'}</div></div>
+          <div class="det-item"><label>비자 유형</label><div class="val">${visaBadge(emp.visa_type||'?')}</div></div>
+          <div class="det-item"><label>비자 상태</label><div class="val">${statusBadge(emp.visa_status||'정상')}</div></div>
+          <div class="det-item"><label>체류 만료일</label><div class="val">${emp.expiry_date} ${ddayChip(emp.expiry_date)}</div></div>
+          <div class="det-item"><label>외국인등록번호</label><div class="val mono">${emp.alien_reg_no||'-'}</div></div>
+          <div class="det-item"><label>여권번호</label><div class="val mono">${emp.passport_no||'-'}</div></div>
+          <div class="det-item"><label>여권 만료일</label><div class="val">${emp.passport_expiry||'-'}</div></div>
+          <div class="det-item"><label>소속 업체</label><div class="val">${emp.company_name||'-'}</div></div>
+          <div class="det-item"><label>사업장 변경</label><div class="val">${emp.workplace_restriction?'<span class="badge b-red">제한</span>':'<span class="badge b-green">자유</span>'}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>📋 내 의뢰 현황</h3><button class="btn btn-sm btn-primary" onclick="openNewIssue()">+ 의뢰 등록</button></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>유형</th><th>제목</th><th>상태</th><th>접수일</th></tr></thead>
+        <tbody>${myIssues.length
+          ? myIssues.map(i=>`<tr onclick="openIssueDetail('${i.id}')"><td><span class="badge b-blue">${i.issue_type}</span></td><td>${i.title}</td><td>${issueStatusHtml(i.status)}</td><td class="td-mono">${i.request_date||''}</td></tr>`).join('')
+          : '<tr><td colspan="4"><div class="empty" style="padding:30px"><div class="ei">📭</div><p>등록된 의뢰가 없습니다</p></div></td></tr>'
+        }</tbody>
+      </table></div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════
+function closeModal(id) { document.getElementById(id).classList.remove('show') }
+function openNewUser() {
+  (async()=>{
+    const comps = await api('/api/companies');
+    const opts = comps?comps.map(c=>`<option value="${c.id}">${c.name}</option>`).join(''):'';
+    document.getElementById('userModalBody').innerHTML=`
+      <div class="frow c1"><div class="field"><label>역할 *</label><select id="u_role">
+        <option value="company_admin">업체관리자</option><option value="employee">외국인직원</option><option value="visa_admin">비자관리자</option>
+      </select></div></div>
+      <div class="frow c1"><div class="field"><label>소속 업체</label><select id="u_comp"><option value="">-- 없음 (비자관리자) --</option>${opts}</select></div></div>
+      <div class="frow c2">
+        <div class="field"><label>아이디 *</label><input id="u_id" placeholder="아이디"></div>
+        <div class="field"><label>비밀번호 *</label><input id="u_pw" type="password" placeholder="초기 비밀번호"></div>
+      </div>
+      <div class="frow c2">
+        <div class="field"><label>이름</label><input id="u_name"></div>
+        <div class="field"><label>이메일</label><input id="u_email"></div>
+      </div>
+    `;
+    document.getElementById('modalUser').classList.add('show');
+  })();
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show')}));
+
+// Auto-login if token exists
+if (token && currentUser) {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appWrap').classList.remove('hidden');
+  initApp();
+}
+</script>
+</body>
+</html>
